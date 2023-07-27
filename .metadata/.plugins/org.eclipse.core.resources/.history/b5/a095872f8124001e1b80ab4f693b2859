@@ -1,0 +1,5 @@
+package com.demo.hotelservice.repo;
+
+public interface HotelRepo {
+
+}

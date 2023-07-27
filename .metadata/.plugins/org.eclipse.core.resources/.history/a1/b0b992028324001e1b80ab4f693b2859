@@ -1,0 +1,5 @@
+package com.demo.hotelservice.controller;
+
+public class HotelController {
+
+}

@@ -1,0 +1,5 @@
+package com.demo.userservice.entity;
+
+public class User {
+
+}

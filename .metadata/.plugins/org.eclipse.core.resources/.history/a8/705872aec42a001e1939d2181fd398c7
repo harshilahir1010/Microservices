@@ -1,0 +1,5 @@
+package com.demo.userservice.config;
+
+public class Config {
+
+}
