@@ -1,5 +1,0 @@
-package com.demo.ratingservice.entity;
-
-public class Rating {
-
-}

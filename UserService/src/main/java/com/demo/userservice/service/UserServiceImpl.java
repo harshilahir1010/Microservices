@@ -1,8 +1,10 @@
 package com.demo.userservice.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.demo.userservice.entity.Hotel;
 import com.demo.userservice.entity.Rating;
 import com.demo.userservice.entity.User;
 import com.demo.userservice.repo.UserRepo;
@@ -36,11 +39,21 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public User findSpecific(long id) {
 		User user=repo.findById(id).get();
-		ArrayList<Rating> forObject = restTemplate.getForObject("http://localhost:8082/rating/user/"+user.getId(), ArrayList.class);
+		Rating[] ratingOfUser = restTemplate.getForObject("http://RATING-SERVICE/rating/user/"+user.getId(), Rating[].class);
+		logger.info("{}",ratingOfUser);
 		
-		logger.info("{}",forObject);
-		System.out.println(forObject);
-	    user.setRating(forObject);
+		List<Rating> list = Arrays.stream(ratingOfUser).toList();
+		
+		List<Rating> ratings= list.stream().map(rating ->{
+		  ResponseEntity<Hotel> entity=restTemplate.getForEntity("http://HOTEL-SERVICE/hotel/"+rating.getHotelId(), Hotel.class);
+			Hotel hotel=entity.getBody();
+			
+			rating.setHotel(hotel);
+			
+			return rating;
+		} ).collect(Collectors.toList());
+		
+	    user.setRating(ratings);
 		return user;
 	}
 
